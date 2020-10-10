@@ -1,3 +1,4 @@
+const { response } = require('express');
 const User = require('../models/Users');//Importando Models
 
 class UserControllers {

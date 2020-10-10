@@ -1,5 +1,5 @@
 const express = require('express'); //Usar ROTAS
-const mysql = require('mysql'); //Usar BancoDeDados
+//const mysql = require('mysql'); //Usar BancoDeDados
 const routes = require('./routes/routes');//Importando as Rotas
 const app = express();
 
@@ -7,4 +7,4 @@ const app = express();
 app.use(express.json());
 app.use(routes);
 //Criando uma Port para o LocalHost
-app.listen(3333); 
+app.listen(8001); 

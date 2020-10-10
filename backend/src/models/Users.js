@@ -1,14 +1,8 @@
-const yup = require('yup'); //Usar obrigatoriedade de informações
+//const yup = require('yup'); //Usar obrigatoriedade de informações
 const conex = require('../db');//Exportando a classe de banco de dados para conexão
 const util = require('util');//Exportando a função para transformar outras funções em Assincrona 
 
 class User {
-    /*constructor() {
-        var name;
-        var cpf;
-        var password;
-        var cep;
-    }*/
     //Registrar um usuario no BANCO DE DADOS
     db_insertd(request) {
         //Realizando Conexão com Banco de Dados
@@ -38,5 +32,6 @@ class User {
         const resultado = await query(sql, data);
         return resultado;
     }
+
 }
 module.exports = User;//Exportando a Classe de Usuario
