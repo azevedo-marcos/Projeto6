@@ -3,25 +3,29 @@ const express = require('express');//Exportando o Express para criação das rot
 const passport = require('passport');//Exportando o Passport para utilização do OAuth
 const cookieSession = require('cookie-session');//Exportando o Cookie Session para guardar os dados da sessão
 require('../../passport-setup'); //Importando o arquivo com as configurações do passaport
+const cors = require('cors')  //Permitir que as rotas sejam acessadas por endereço diferente
 const routes = express()
 
+routes.use(cors())
+
+//GOOGLE ROUTES
 
 //Guardando os dados da Sessão;
 routes.use(cookieSession({
-    name: 'session',    
+    name: 'session',
     keys: ['key1', 'key2']
 }))
 
 //Instanciando o objeto da classe de Controller de Usuario 
-var users = new UserController(); 
+var users = new UserController();
 //Inicializando o processo de autentificação 
 routes.use(passport.initialize());
 routes.use(passport.session());
 
 //Verificar se o usuario está logado
-const isLoggedIn = (req,res,next)=>{
+const isLoggedIn = (req, res, next) => {
     //Se existier "USER", ele estão logado
-    if(req.user){
+    if (req.user) {
         next();
     }
     //Se não existir, retornarar erro 401
@@ -30,38 +34,37 @@ const isLoggedIn = (req,res,next)=>{
     }
 }
 //Rota para não log pelo google
-routes.get('/', (req,res) => res.send("Nao Logado"));
+routes.get('/', (req, res) => res.json("Nao Logado"));
 
 //Rota para login bem sucedido
-routes.get('/good', isLoggedIn ,(req,res) =>res.json(JSON.stringify(req.user._json)));
+routes.get('/good', isLoggedIn, (req, res) => res.json(req.user));
 //routes.get('/good', isLoggedIn ,(req,res) =>res.send(`Logado ${req.user.displayName}!`) ); 
 
-//Rota para efetuar o login
+//Rota para efetuar o login via Google
 routes.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 //Rota de Retorno
-routes.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login' }),
-    function (req, res) {
-        //Sucesso de autentificação, redirecionar para a home. Por enquanto esta sendo usado /good
-        res.redirect('/good');
-    });
+routes.get('/google/callback', passport.authenticate('google',{ successRedirect: '/show', failureRedirect: '/login' }));
 //Rota para deslogar o usuario  
-routes.get('/logout',(req,res)=>{
-    req.session=null;
-    req=null;
+routes.get('/logout', (req, res) => {
     req.logOut();
     res.redirect('/');
 })
 //Rota para visualizar usuario
-routes.get('/show',isLoggedIn,(req,res)=>{
-    res.json(req.user._json);
+routes.get('/show', isLoggedIn, (req, res) => { res.json(req.user._json); })
+//FACEBOOK ROUTES
 
-})
+//Rota para efetuar o login via Facebook
+routes.get('/facebook', passport.authenticate('facebook'));
+
+//Rota de Retorno 
+routes.get('/facebook/callback', passport.authenticate('facebook', { successRedirect: '/show', failureRedirect: '/login' }));
+
+//APP ROUTES
 
 //Rota de verificar USUARIO
 routes.post('/login', users.login);
 //Rota de registrar USUARIO
 routes.post('/register', users.register);
 //Exportando as rotas
-module.exports = routes; 
-
+module.exports = routes;

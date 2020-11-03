@@ -11,7 +11,7 @@ class UserControllers {
     //Entrando com usuario
     async login(request, response) {
         var register = new User;
-        var i = await register.db_list(request);
+        var i = await register.db_login(request);
         return response.json(i[0]);
     }
 }

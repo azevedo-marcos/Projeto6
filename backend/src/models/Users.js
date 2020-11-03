@@ -18,7 +18,7 @@ class User {
         });
     }
     //Entrar com um usuario
-    async db_list(request) {
+    async db_login(request) {
         //Realizando Conexão com Banco de Dados
         var conn = conex.conectar(); 
         //Transforma uma função "conn.query" em ASSINCRONA
@@ -32,6 +32,6 @@ class User {
         const resultado = await query(sql, data);
         return resultado;
     }
-
+    
 }
 module.exports = User;//Exportando a Classe de Usuario
