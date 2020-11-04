@@ -1,4 +1,3 @@
-//const yup = require('yup'); //Usar obrigatoriedade de informações
 const conex = require('../db');//Exportando a classe de banco de dados para conexão
 const util = require('util');//Exportando a função para transformar outras funções em Assincrona 
 const { json } = require('express');
