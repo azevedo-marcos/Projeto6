@@ -44,7 +44,7 @@ routes.get('/good', isLoggedIn, (req, res) => res.json(req.user));
 routes.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 //Rota de Retorno
-routes.get('/google/callback', passport.authenticate('google',{ successRedirect: '/show', failureRedirect: '/login' }));
+routes.get('/google/callback', passport.authenticate('google', { successRedirect: '/show', failureRedirect: '/login' }));
 //Rota para deslogar o usuario  
 routes.get('/logout', (req, res) => {
     req.logOut();
@@ -61,10 +61,18 @@ routes.get('/facebook', passport.authenticate('facebook'));
 routes.get('/facebook/callback', passport.authenticate('facebook', { successRedirect: '/show', failureRedirect: '/login' }));
 
 //APP ROUTES
-
+    
 //Rota de verificar USUARIO
 routes.post('/login', users.login);
+
 //Rota de registrar USUARIO
 routes.post('/register', users.register);
+
+//Rota de listar USUARIOS
+routes.get('/list', users.list);
+
+//Rota de update USUARIOS
+routes.patch('/update', users.update);
+
 //Exportando as rotas
 module.exports = routes;

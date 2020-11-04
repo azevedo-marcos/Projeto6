@@ -1,6 +1,6 @@
+//const yup = require('yup'); //Usar obrigatoriedade de informações
 const conex = require('../db');//Exportando a classe de banco de dados para conexão
 const util = require('util');//Exportando a função para transformar outras funções em Assincrona 
-const { json } = require('express');
 
 class User {
     //Registrar um usuario no BANCO DE DADOS
@@ -20,7 +20,7 @@ class User {
     //Entrar com um usuario
     async db_login(request) {
         //Realizando Conexão com Banco de Dados
-        var conn = conex.conectar(); 
+        var conn = conex.conectar();
         //Transforma uma função "conn.query" em ASSINCRONA
         const query = util.promisify(conn.query).bind(conn);
         //Pegando os dados da Corpo da Requisição
@@ -29,9 +29,34 @@ class User {
         //Comando SQL de Busca para verificar os dados da entrada
         var sql = "SELECT * FROM user WHERE cpf = ? AND password = ?";
         //Realização da busca SQL
-        const resultado = await query(sql, data);
-        return resultado[0];
+        var result = await query(sql, data);
+        return result[0];
     }
-    
+    async list() {
+        //Realizando Conexão com Banco de Dados
+        var conn = conex.conectar();
+        //Transforma uma função "conn.query" em ASSINCRONA
+        const query = util.promisify(conn.query).bind(conn);
+        //Comando SQL de Busca para verificar os dados da entrada
+        var sql = "SELECT * FROM user";
+        //Realização da busca SQL
+        var result = await query(sql);
+        return result;
+    }
+    async update(request) {
+        //Pegando os dados da Corpo da Requisição
+        const { cpf, newpassword, oldpassword } = request.body;
+        var data = [newpassword, cpf, oldpassword];
+        //Realizando Conexão com Banco de Dados
+        var conn = conex.conectar();
+        //Transforma uma função "conn.query" em ASSINCRONA
+        const query = util.promisify(conn.query).bind(conn);
+        //Comando SQL de Busca para verificar os dados da entrada
+        var sql = "UPDATE user SET password = ? WHERE cpf = ? AND password = ?";
+        //Realização da busca SQL
+        var resultt = await query(sql, data);
+        return resultt.changedRows;
+    }
+
 }
 module.exports = User;//Exportando a Classe de Usuario
