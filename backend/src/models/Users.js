@@ -1,17 +1,18 @@
 //const yup = require('yup'); //Usar obrigatoriedade de informações
 const conex = require('../db');//Exportando a classe de banco de dados para conexão
 const util = require('util');//Exportando a função para transformar outras funções em Assincrona 
+const { json } = require('express');
 
 class User {
     //Registrar um usuario no BANCO DE DADOS
-    db_insertd(request) {
+    db_insert(request) {
         //Realizando Conexão com Banco de Dados
         var conn = conex.conectar();
         //Pegando os dados da Corpo da Requisição
         const { name, cpf, password, cep } = request.body;
-        var data = [[name, cpf, password, cep]];
+        var data = [name, cpf, password, cep];
         //Comando SQL de Busca para verificar os dados da entrada
-        var sql = "INSERT INTO user (name,cpf,password,cep) VALUES (?)";
+        var sql = "INSERT INTO user (name,cpf,password,cep) VALUES (?,?,?,?)";
         //Realização da inserção no Banco de Dados
         conn.query(sql, data, function (err) { //(err, result)  
             if (err) throw err;
@@ -30,7 +31,7 @@ class User {
         var sql = "SELECT * FROM user WHERE cpf = ? AND password = ?";
         //Realização da busca SQL
         const resultado = await query(sql, data);
-        return resultado;
+        return resultado[0];
     }
     
 }
