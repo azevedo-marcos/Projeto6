@@ -1,5 +1,4 @@
-//const yup = require('yup'); //Usar obrigatoriedade de informações
-const conex = require('../db');//Exportando a classe de banco de dados para conexão
+const conex = require('../config/Database');//Exportando a classe de banco de dados para conexão
 const util = require('util');//Exportando a função para transformar outras funções em Assincrona 
 
 class User {
@@ -32,6 +31,7 @@ class User {
         var result = await query(sql, data);
         return result[0];
     }
+    //Listando os usuarios
     async list() {
         //Realizando Conexão com Banco de Dados
         var conn = conex.conectar();
@@ -43,6 +43,7 @@ class User {
         var result = await query(sql);
         return result;
     }
+    //Atualização de senha do usuario
     async update(request) {
         //Pegando os dados da Corpo da Requisição
         const { cpf, newpassword, oldpassword } = request.body;
