@@ -1,5 +1,9 @@
 const User = require('../models/Users');//Importando Models
+const dotenv = require('dotenv').config();//Importando Variaveis de Ambiente
+const Email = require('../uteis/Email')//Importando função Enviar Email
 const yup = require('yup');
+
+
 
 class UserControllers {
 
@@ -8,7 +12,7 @@ class UserControllers {
         //Verificando se todos os dados necessarios foram passados
         let schema = yup.object().shape({
             name: yup.string().required(),
-            cpf: yup.number().required(),
+            cpf: yup.string().required(),
             cep: yup.string().required(),
             password: yup.string().required(),
         });
@@ -30,7 +34,7 @@ class UserControllers {
     async login(request, response) {
         //Verificando se todos os dados necessarios foram passados
         let schema = yup.object().shape({
-            cpf: yup.number().required().positive(),
+            cpf: yup.string().required().positive(),
             password: yup.string().required(),
         });
         if (!(await schema.isValid(request.body))) {
@@ -48,26 +52,53 @@ class UserControllers {
         //Buscando Usuarios
         var list = await Database.list(request);
         return response.json(list);
-    }
 
+    }
     //Atualizar senha de usuarios
-    async update(request, response) {
+    async update_pass(request, response) {
         //Verificando se todos os dados necessarios foram passados
         let schema = yup.object().shape({
-            cpf: yup.number().required().positive(),
+            cpf: yup.string().required(),
             newpassword: yup.string().required(),
-            oldpassword: yup.string().required(),
         });
         if (!(await schema.isValid(request.body))) {
             return response.json({ error: 'Validation Fails' });
         }
-        var Database = new User;
-        var changed = await Database.update(request)
-        //Verifica se houve sucesso na atualização
-        if (changed) {
-            return response.json({ result: 'Success' });
-        }
-        return response.json({ result: 'Error' });
+        //Atualizando o banco de dados
+        var result = ChangePass(request);
+        return response.json(result);
+
     }
+
+    async recover_pass(request, response) {
+        //Verificando se todos os dados necessarios foram passados
+        let schema = yup.object().shape({
+            email: yup.string().email().required(),
+            title: yup.string().required(),
+            cpf: yup.string().required(),
+        });
+        //Gerando uma senha nova para o usuario
+        request.body.newpassword = Math.random().toString(36).substring(7);
+        if (!(await schema.isValid(request.body))) {
+            return response.json({ error: 'Validation Fails' });
+        }
+        //Atualizando o banco de dados
+        var result = await ChangePass(request);
+        //Enviar email
+        var recover = new Email();
+        recover.sendEmail(request);
+
+        return response.json(result);
+    }
+}
+//Atualizar BD
+ChangePass = async (request) => {
+    var Database = new User;
+    var changed = await Database.update_pass(request)
+    //Verifica se houve sucesso na atualização
+    if (changed) {
+        return ({ result: 'Success' });
+    }
+    return ({ result: 'Error' });
 }
 module.exports = UserControllers;

@@ -1,4 +1,4 @@
-const conex = require('../config/Database');//Exportando a classe de banco de dados para conexão
+const conex = require('../database/index');//Exportando a classe de banco de dados para conexão
 const util = require('util');//Exportando a função para transformar outras funções em Assincrona 
 
 class User {
@@ -44,16 +44,16 @@ class User {
         return result;
     }
     //Atualização de senha do usuario
-    async update(request) {
+    async update_pass(request) {
         //Pegando os dados da Corpo da Requisição
-        const { cpf, newpassword, oldpassword } = request.body;
-        var data = [newpassword, cpf, oldpassword];
+        const { cpf, newpassword} = request.body;
+        var data = [newpassword, cpf];
         //Realizando Conexão com Banco de Dados
         var conn = conex.conectar();
         //Transforma uma função "conn.query" em ASSINCRONA
         const query = util.promisify(conn.query).bind(conn);
         //Comando SQL de Busca para verificar os dados da entrada
-        var sql = "UPDATE user SET password = ? WHERE cpf = ? AND password = ?";
+        var sql = "UPDATE user SET password = ? WHERE cpf = ?";
         //Realização da busca SQL
         var resultt = await query(sql, data);
         return resultt.changedRows;

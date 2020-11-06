@@ -71,8 +71,17 @@ routes.post('/register', users.register);
 //Rota de listar USUARIOS
 routes.get('/list', users.list);
 
-//Rota de update USUARIOS
-routes.patch('/update', users.update);
+//Rota de update de senha do USUARIOS
+routes.post('/password/update', users.update_pass);
+
+//Rota de recuperação de senha via EMAIL
+routes.post('/password/recover',users.recover_pass)
+
+//Rota retorno da recuperação de senha via EMAIL
+routes.get('/password/recover/callback/:email',(request,response)=>{
+    return response.json({ email: request.params.email ,procedimento: 'Atualizar senha' });
+    
+})
 
 //Exportando as rotas
 module.exports = routes;
