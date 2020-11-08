@@ -7,10 +7,10 @@ class User {
         //Realizando Conexão com Banco de Dados
         var conn = conex.conectar();
         //Pegando os dados da Corpo da Requisição
-        const { name, cpf, password, cep } = request.body;
-        var data = [name, cpf, password, cep];
+        const { name, cpf, password, address, email, phone} = request.body;
+        var data = [name, cpf, password, address, email, phone];
         //Comando SQL de Busca para verificar os dados da entrada
-        var sql = "INSERT INTO user (name,cpf,password,cep) VALUES (?,?,?,?)";
+        var sql = "INSERT INTO user (name,cpf,password,address,email, phone) VALUES (?,?,?,?,?,?)";
         //Realização da inserção no Banco de Dados
         conn.query(sql, data, function (err) { //(err, result)  
             if (err) throw err;
@@ -23,10 +23,10 @@ class User {
         //Transforma uma função "conn.query" em ASSINCRONA
         const query = util.promisify(conn.query).bind(conn);
         //Pegando os dados da Corpo da Requisição
-        const { cpf, password } = request.body;
-        var data = [cpf, password];
+        const { email, password } = request.body;
+        var data = [email, password];
         //Comando SQL de Busca para verificar os dados da entrada
-        var sql = "SELECT * FROM user WHERE cpf = ? AND password = ?";
+        var sql = "SELECT * FROM user WHERE email = ? AND password = ?";
         //Realização da busca SQL
         var result = await query(sql, data);
         return result[0];
@@ -46,14 +46,14 @@ class User {
     //Atualização de senha do usuario
     async update_pass(request) {
         //Pegando os dados da Corpo da Requisição
-        const { cpf, newpassword} = request.body;
-        var data = [newpassword, cpf];
+        const { email, new_password} = request.body;
+        var data = [new_password, email];
         //Realizando Conexão com Banco de Dados
         var conn = conex.conectar();
         //Transforma uma função "conn.query" em ASSINCRONA
         const query = util.promisify(conn.query).bind(conn);
         //Comando SQL de Busca para verificar os dados da entrada
-        var sql = "UPDATE user SET password = ? WHERE cpf = ?";
+        var sql = "UPDATE user SET password = ? WHERE email = ?";
         //Realização da busca SQL
         var resultt = await query(sql, data);
         return resultt.changedRows;

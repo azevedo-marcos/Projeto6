@@ -13,11 +13,14 @@ class UserControllers {
         let schema = yup.object().shape({
             name: yup.string().required(),
             cpf: yup.string().required(),
-            cep: yup.string().required(),
+            email: yup.string().required(),
+            address: yup.string().required(),
             password: yup.string().required(),
+            phone: yup.string().required(),
         });
+        console.log(request.body);
         if (!(await schema.isValid(request.body))) {
-            return response.json({ error: 'Validation Fails' });
+            return response.json({ error: 'Validation Failled' });
         }
         var Database = new User;
         //Verificando se o usuario já existe
@@ -34,7 +37,7 @@ class UserControllers {
     async login(request, response) {
         //Verificando se todos os dados necessarios foram passados
         let schema = yup.object().shape({
-            cpf: yup.string().required().positive(),
+            email: yup.string().required(),
             password: yup.string().required(),
         });
         if (!(await schema.isValid(request.body))) {
@@ -58,8 +61,8 @@ class UserControllers {
     async update_pass(request, response) {
         //Verificando se todos os dados necessarios foram passados
         let schema = yup.object().shape({
-            cpf: yup.string().required(),
-            newpassword: yup.string().required(),
+            email: yup.string().required(),
+            new_password: yup.string().required(),
         });
         if (!(await schema.isValid(request.body))) {
             return response.json({ error: 'Validation Fails' });
@@ -75,10 +78,9 @@ class UserControllers {
         let schema = yup.object().shape({
             email: yup.string().email().required(),
             title: yup.string().required(),
-            cpf: yup.string().required(),
         });
         //Gerando uma senha nova para o usuario
-        request.body.newpassword = Math.random().toString(36).substring(7);
+        request.body.new_password = Math.random().toString(36).substring(7);
         if (!(await schema.isValid(request.body))) {
             return response.json({ error: 'Validation Fails' });
         }
